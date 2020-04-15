@@ -6,7 +6,7 @@ int currSec;
 int prevSec;
 
 void setup() {
-  size(900, 900);
+  size(900, 900, P3D);
   ball_num = 50;
   counter = 0;
   frameCounter = 0;
@@ -17,27 +17,36 @@ void setup() {
 
 void draw() {
   background(255);
-  counter++;
+  lights();
+
   frameCounter++;
   currSec = second();
-  if (currSec != prevSec){
-   print(frameCounter + "fps, " + balls.size() + " balls\n");
-   frameCounter = 0;
-   prevSec = currSec;
+  if (currSec != prevSec) {
+    print(frameCounter + "fps, " + balls.size() + " balls\n");
+    frameCounter = 0;
+    prevSec = currSec;
   }
-  
-  if (counter >= 1){
-   balls.add(new Ball());
-   counter = 0;
-  }
-  
+
   checkCollisions();
   for (Ball ball : balls) {
     ball.moveMe();
     ball.drawMe();
   }
-  
 }
+
+void keyPressed() {
+  print("Key Pressed");
+  if (key == CODED) {
+    if (keyCode == UP) {
+      balls.add(new Ball());
+      print("new bol");
+    }
+    if (keyCode == DOWN) {
+      balls.remove(0);
+    }
+  }
+}
+
 
 void checkCollisions() {
   for (int i = 0; i < balls.size()-1; i++) {
@@ -45,7 +54,7 @@ void checkCollisions() {
       Ball a = balls.get(i);
       Ball b = balls.get(j);
       if (dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y) < a.r+b.r) {
-        collisionResponse_mass(a,b);
+        collisionResponse_mass(a, b);
         a.toggleColour();
         b.toggleColour();
       }
@@ -86,7 +95,7 @@ void collisionResponse_mass(Ball a, Ball b) {
 
   a.vel = v1New;
   b.vel = v2New;
-  ensureNoOverlap(a,b);
+  ensureNoOverlap(a, b);
 }
 
 
