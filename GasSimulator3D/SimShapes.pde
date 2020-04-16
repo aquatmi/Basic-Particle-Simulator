@@ -20,42 +20,41 @@
 // Drawing them, all at once, or individually
 // 
 
-class SimObjectManager{
+class SimObjectManager {
   ArrayList<SimTransform> simObjList = new ArrayList<SimTransform>();
-  
-  
-  void addSimObject(SimTransform obj, String id){
+
+
+  void addSimObject(SimTransform obj, String id) {
     obj.setID(id);
     simObjList.add(obj);
   }
-  
-  SimTransform getSimObject(String id){
-    for(SimTransform thisObj: simObjList){
-      if( thisObj.idMatches(id) ) return thisObj;
+
+  SimTransform getSimObject(String id) {
+    for (SimTransform thisObj : simObjList) {
+      if ( thisObj.idMatches(id) ) return thisObj;
     }
     // if it can't find a match then ...
     return null;
   }
-  
-  int getNumSimObjects(){
+
+  int getNumSimObjects() {
     return simObjList.size();
   }
-  
-  SimTransform getSimObject(int n){
+
+  SimTransform getSimObject(int n) {
     return simObjList.get(n);
   }
-  
-  
-  void drawAll(){
-    for(SimTransform obj: simObjList){
+
+
+  void drawAll() {
+    for (SimTransform obj : simObjList) {
       obj.drawMe();
     }
   }
-  
-  
-  
-  
-  
+
+  ArrayList<SimTransform> getObjects() {
+    return simObjList;
+  }
 }
 
 
@@ -63,7 +62,7 @@ class SimObjectManager{
 
 
 
-abstract class SimTransform{
+abstract class SimTransform {
   // this part of the class contains id information about this shape
   // and also stores the id of shapes which are colliding with this shape
   String id;
@@ -80,8 +79,8 @@ abstract class SimTransform{
   String getColliderID() {
     return colliderID;
   }
-  
-  void setColliderID(String n){
+
+  void setColliderID(String n) {
     colliderID = n;
   }
 
@@ -89,32 +88,32 @@ abstract class SimTransform{
     this.colliderID = otherthing.getID();
     otherthing.setColliderID(this.id);
   }
-  
-  boolean idMatches(String s){
-    if( id.equals(s)) return true;
+
+  boolean idMatches(String s) {
+    if ( id.equals(s)) return true;
     return false;
   }
-  
-  boolean isClass(Object o, String s){
+
+  boolean isClass(Object o, String s) {
     return (getClassName(o).equals(s));
   }
-  
-  String getClassName(Object o){
+
+  String getClassName(Object o) {
     return o.getClass().getSimpleName();
   }
-  
+
   // abstract methods your sub class has to implement
   abstract boolean collidesWith(SimTransform c);
-  
+
   abstract boolean calcRayIntersection(SimRay sr);
-  
+
   abstract void drawMe();
-  
+
   ///////////////////////////////////////////////////////////////////////
   // this part of the class is the main sim transform stuff to 
   // do with vertices and geometry transforms
-  
-  
+
+
   // all objects have one
   PVector origin = new PVector(0, 0, 0);
 
@@ -276,7 +275,7 @@ abstract class SimTransform{
 // SimSphere
 //
 
-class SimSphere extends SimTransform{
+class SimSphere extends SimTransform {
 
 
 
@@ -284,31 +283,29 @@ class SimSphere extends SimTransform{
 
   public int levelOfDetail = 12;
   PShape drawSphere; 
-  
+
   public SimSphere() {
-    init( vec(0,0,0),  1);
+    init( vec(0, 0, 0), 1);
   }
 
   public SimSphere(float rad) {
 
-    init( vec(0,0,0),  rad);
-    
+    init( vec(0, 0, 0), rad);
   }
 
   public SimSphere(PVector cen, float rad) {
-    init( cen,  rad);
-    
+    init( cen, rad);
   }
-  
-  void init(PVector cen, float rad){
-     radius = rad;
-     origin = cen.copy();
-     updateDrawStyle();
+
+  void init(PVector cen, float rad) {
+    radius = rad;
+    origin = cen.copy();
+    updateDrawStyle();
   }
-  
-  void updateDrawStyle(){
-     sphereDetail(levelOfDetail);
-     drawSphere = createShape(SPHERE,1f);
+
+  void updateDrawStyle() {
+    sphereDetail(levelOfDetail);
+    drawSphere = createShape(SPHERE, 1f);
   }
 
   public PVector getCentre() {
@@ -351,24 +348,24 @@ class SimSphere extends SimTransform{
     }
     return false;
   }
-  
-  
-  public boolean collidesWith(SimTransform other){
+
+
+  public boolean collidesWith(SimTransform other) {
     String otherClass = getClassName(other);
-    println("collidesWith between this ", getClassName(this), " and " , otherClass);
+    //println("collidesWith between this ", getClassName(this), " and ", otherClass);
     switch(otherClass) {
-      case "SimSphere": 
-          return intersectsSphere((SimSphere) other);
-      case "SimBox": 
-          return ((SimBox)other).intersectsSphere(this);
-      case "SimSurfaceMesh": 
-          println("SimSphere collides with sim surface mesh not implemented");
-        break;
-      case "SimModel": 
-          println("SimSphere collides with sim model not implemented");
-        break;
+    case "SimSphere": 
+      return intersectsSphere((SimSphere) other);
+    case "SimBox": 
+      return ((SimBox)other).intersectsSphere(this);
+    case "SimSurfaceMesh": 
+      println("SimSphere collides with sim surface mesh not implemented");
+      break;
+    case "SimModel": 
+      println("SimSphere collides with sim model not implemented");
+      break;
     }
-    
+
     return false;
   }
 
@@ -395,9 +392,8 @@ class SimSphere extends SimTransform{
     // if t is negative then ray origin inside sphere, clamp t to zero
     if (t < 0) { 
       t = 0;
-      
     }
-    
+
 
     PVector dirMult = PVector.mult(ray.direction, t);
     ray.intersectionPoint = PVector.add(ray.origin, dirMult );
@@ -409,20 +405,21 @@ class SimSphere extends SimTransform{
 
 
   void drawMe() {
-    
-    
+
+
     float r = getRadius();
-    println("shpere radius",r);
-    
-     
-      PVector transCen = getCentre();
-      
-      pushMatrix();
-      translate(transCen.x, transCen.y, transCen.z);
-      scale(r);
- 
-      shape(drawSphere);
-      popMatrix();
+    //println("shpere radius", r);
+
+
+    PVector transCen = getCentre();
+
+    pushMatrix();
+    translate(transCen.x, transCen.y, transCen.z);
+    scale(r);
+    fill(50,255,50);
+    noStroke();
+    shape(drawSphere);
+    popMatrix();
   }
 }
 
@@ -433,7 +430,7 @@ class SimSphere extends SimTransform{
 // isPointInside only works for AABBs
 // intersects does not work yet
 
-class SimBox extends SimTransform{
+class SimBox extends SimTransform {
   // Bounding Box SimObject
   // It can only be initially defined in the major axis, but after that can be rotated
   // It can be used as an Axis Aligned Bounding Box
@@ -632,25 +629,25 @@ class SimBox extends SimTransform{
     println("non axis aligned BB point intersection not implemented yet");
     return false;
   }
-  
-  
-  
-  public boolean collidesWith(SimTransform other){
+
+
+
+  public boolean collidesWith(SimTransform other) {
     String otherClass = getClassName(other);
-    println("collidesWith between this ", getClassName(this), " and " , otherClass);
+    println("collidesWith between this ", getClassName(this), " and ", otherClass);
     switch(otherClass) {
-      case "SimSphere": 
-          return intersectsSphere((SimSphere)other);
-      case "SimBox": 
-          return intersectsBox((SimBox)other);
-      case "SimSurfaceMesh": 
-          println("SimBox collides with sim surface mesh not implemented");
-        break;
-      case "SimModel": 
-          println("SimBox collides with sim model not implemented");
-        break;
+    case "SimSphere": 
+      return intersectsSphere((SimSphere)other);
+    case "SimBox": 
+      return intersectsBox((SimBox)other);
+    case "SimSurfaceMesh": 
+      println("SimBox collides with sim surface mesh not implemented");
+      break;
+    case "SimModel": 
+      println("SimBox collides with sim model not implemented");
+      break;
     }
-    
+
     return false;
   }
 
@@ -819,7 +816,7 @@ class SimBox extends SimTransform{
 // It can be set by copying in a PShape. This will then be "flattened" (children and transforms removed)
 // texture and material will also be lost
 
-class SimModel extends SimTransform{
+class SimModel extends SimTransform {
 
   // stores the cardinal model
   private PShape cardinalModel;
@@ -853,65 +850,76 @@ class SimModel extends SimTransform{
     boundingSphere = new SimSphere(centrePoint, radius);
     preferredfCollisionShape = "box";
   }
-  
-  void setID(String i){
+
+  void setID(String i) {
     // this overrides the simtransform setID method, to give the bounding
     // shapes the same id
     id = i;
     boundingBox.setID(id + "_boundingBox");
     boundingSphere.setID(id + "_boundingSphere");
   }
-  
-  void setPreferredCollisionShape(String BOXorSPHERE){
+
+  void setPreferredCollisionShape(String BOXorSPHERE) {
     String s = BOXorSPHERE.toLowerCase();
-    if(s.equals("box")) preferredfCollisionShape = "box";
-    if(s.equals("sphere")) preferredfCollisionShape = "sphere";
+    if (s.equals("box")) preferredfCollisionShape = "box";
+    if (s.equals("sphere")) preferredfCollisionShape = "sphere";
   }
-  
-  SimTransform getPreferredCollisionShape(){
-    if(preferredfCollisionShape.equals("box")) {return getBoundingBox();}
-    else {  return getBoundingSphere(); }
+
+  SimTransform getPreferredCollisionShape() {
+    if (preferredfCollisionShape.equals("box")) {
+      return getBoundingBox();
+    } else {  
+      return getBoundingSphere();
+    }
   }
-  
-  boolean calcRayIntersection(SimRay sr){ 
+
+  boolean calcRayIntersection(SimRay sr) { 
     SimTransform obj = null;
-    if(preferredfCollisionShape.equals("sphere")) { obj = getBoundingSphere();}
-    else { obj = getBoundingBox();}
-    
+    if (preferredfCollisionShape.equals("sphere")) { 
+      obj = getBoundingSphere();
+    } else { 
+      obj = getBoundingBox();
+    }
+
     return obj.calcRayIntersection(sr);
   }
 
-  public boolean collidesWith(SimTransform other){
+  public boolean collidesWith(SimTransform other) {
     String otherClass = getClassName(other);
-    println("collidesWith between this ", getClassName(this), " and " , otherClass);
-    
-    if(otherClass.equals("SimModel")){
+    println("collidesWith between this ", getClassName(this), " and ", otherClass);
+
+    if (otherClass.equals("SimModel")) {
       other = getPreferredCollisionShape();
       otherClass = getClassName(other);
     }
-    
+
     switch(otherClass) {
-      case "SimSphere": 
-          return intersectsWithPreferredBoundingShape((SimSphere)other);
-      case "SimBox": 
-          return intersectsWithPreferredBoundingShape((SimBox)other);
-      case "SimSurfaceMesh": 
-        println("SimModel collides with sim surface mesh not implemented - use rays");
-        break;
-      
+    case "SimSphere": 
+      return intersectsWithPreferredBoundingShape((SimSphere)other);
+    case "SimBox": 
+      return intersectsWithPreferredBoundingShape((SimBox)other);
+    case "SimSurfaceMesh": 
+      println("SimModel collides with sim surface mesh not implemented - use rays");
+      break;
     }
-    
+
     return false;
   }
-  
-  boolean intersectsWithPreferredBoundingShape(SimSphere other){
-    if( preferredfCollisionShape.equals("sphere") ) {return boundingSphere.intersectsSphere(other);}
-    else { return boundingBox.intersectsSphere(other);}
+
+  boolean intersectsWithPreferredBoundingShape(SimSphere other) {
+    if ( preferredfCollisionShape.equals("sphere") ) {
+      return boundingSphere.intersectsSphere(other);
+    } else { 
+      return boundingBox.intersectsSphere(other);
+    }
   }
-  
-  boolean intersectsWithPreferredBoundingShape(SimBox other){
-    if( preferredfCollisionShape.equals("sphere") ) {  return ((SimBox)other).intersectsSphere(boundingSphere);} 
-    else {return boundingBox.intersectsBox(other);}
+
+  boolean intersectsWithPreferredBoundingShape(SimBox other) {
+    if ( preferredfCollisionShape.equals("sphere") ) {  
+      return ((SimBox)other).intersectsSphere(boundingSphere);
+    } else {
+      return boundingBox.intersectsBox(other);
+    }
   }
 
   PVector[] getRawVertices() {
@@ -997,14 +1005,14 @@ class SimRay extends SimTransform {
   void printMe() {
     println("SimRay: origin - ", this.origin, " direction - ", this.direction);
   }
-  
-  
-  
-  
-  void drawMe(){
+
+
+
+
+  void drawMe() {
     PVector farPoint = PVector.add(origin, direction);
     farPoint.mult(10000);
-    line(origin.x,origin.y,origin.z, farPoint.x,farPoint.y,farPoint.z); 
+    line(origin.x, origin.y, origin.z, farPoint.x, farPoint.y, farPoint.z);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1014,16 +1022,18 @@ class SimRay extends SimTransform {
   boolean isIntersection() {
     return isIntersection;
   }
-  
-  boolean collidesWith(SimTransform otherObject){
+
+  boolean collidesWith(SimTransform otherObject) {
     return calcIntersection(otherObject);
   }
-  
+
   // this is here to satify the abtract class SimTransform methods
   // in this universe, a sim ray can never intersect another sim ray
-  public boolean calcRayIntersection(SimRay ray){ return false;}
-  
-  int getNumIntersections(){
+  public boolean calcRayIntersection(SimRay ray) { 
+    return false;
+  }
+
+  int getNumIntersections() {
     // this works only with triangulated shapes (so doesnot work with spheres)
     return intersectingTriangleList.size();
   }
@@ -1036,8 +1046,8 @@ class SimRay extends SimTransform {
   public PVector getIntersectionNormal() {
     return this.intersectionNormal;
   }
-  
-  void setIntersectionNormal(PVector n){
+
+  void setIntersectionNormal(PVector n) {
     this.intersectionNormal = n.copy();
     this.intersectionNormal.normalize();
   }
