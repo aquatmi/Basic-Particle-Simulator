@@ -416,7 +416,7 @@ class SimSphere extends SimTransform {
     pushMatrix();
     translate(transCen.x, transCen.y, transCen.z);
     scale(r);
-    fill(50,255,50);
+    fill(50, 255, 50);
     noStroke();
     shape(drawSphere);
     popMatrix();
