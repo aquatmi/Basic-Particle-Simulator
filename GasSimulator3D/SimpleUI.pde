@@ -194,8 +194,8 @@ public class SimpleUI{
       }
     
     // slider creation
-    public Slider addSlider(String label, int x, int y){
-      Slider s = new Slider(UIManagerName,label,x,y);
+    public Slider addSlider(String label, int x, int y, float startValue){
+      Slider s = new Slider(UIManagerName,label,x,y, startValue);
       if(widgetNameAlreadyExists(label,s.UIComponentType)) return null;
       widgetList.add(s);
       return s;
@@ -1060,9 +1060,10 @@ class Slider extends Widget{
   
   public String HANDLETYPE = "ROUND";
   
-  public Slider(String uiname, String label, int x, int y){
+  public Slider(String uiname, String label, int x, int y, float startValue){
     super(uiname,label,x,y,102,30); 
     UIComponentType = "Slider";
+    currentValue = startValue;
   }
   
   public boolean handleMouseEvent(String mouseEventType, int x, int y){
@@ -1350,10 +1351,3 @@ class UIRect{
   }
 
 }// end UIRect class
-
-
-
-boolean isBetweenInc(float v, float lo, float hi){
-  if(v >= lo && v <= hi) return true;
-  return false;
-  }

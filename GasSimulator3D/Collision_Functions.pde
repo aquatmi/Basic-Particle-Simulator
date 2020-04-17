@@ -1,3 +1,56 @@
+void moveParticles(ArrayList<Particle> pl, int pCount) {
+  for (int i = 0; i < pCount; i++) {
+    Particle p = pl.get(i);
+    p.moveMe(pMult);
+    if (p.getCentre().x >= 48) { 
+      p.bounce("x");
+    }
+    if (p.getCentre().x <= -48) {
+      p.bounce("-x");
+    }
+    if (p.getCentre().y >= 48) {
+      p.bounce("y");
+    }
+    if (p.getCentre().y <= -48) {
+      p.bounce("-y");
+    }
+    if (p.getCentre().z >= 48) {
+      p.bounce("z");
+    }
+    if (p.getCentre().z <= -48) {
+      p.bounce("-z");
+    }
+  }
+}
+
+void checkForCollisionSimSphere(ArrayList<Particle> pl, int pCount) {
+  for (int i = 0; i < pl.size()-1; i++) {
+    for (int j = i+1; j< pl.size(); j++) {
+      Particle a = pl.get(i);
+      Particle b = pl.get(j);
+      if (a.intersectsSphere(b)) {
+        //print("bonk \n");
+        collisionResponse_mass(a, b);
+      }
+    }
+  }
+}
+void checkForCollisionShortList(ArrayList<Particle> pl, int pCount) {
+  for (int i = 0; i < pCount-1; i++) {
+    for (int j = i+1; j< pCount; j++) {
+      Particle a = pl.get(i);
+      Particle b = pl.get(j);
+      float gap = a.centre.dist(b.centre); //dist(a.centre.x, a.centre.y, a.centre.z, b.centre.x, b.centre.y, b.centre.z);
+      if (gap < 10){
+        if (a.intersectsSphere(b)) {
+          //print("bonk \n");
+          collisionResponse_mass(a, b);
+        }
+      }
+    }
+  }
+}
+
 void collisionResponse_mass(Particle a, Particle b) {
   PVector v1 = a.vel;
   PVector v2 = b.vel;
@@ -42,7 +95,7 @@ void ensureNoOverlap(Particle a, Particle b) {
   PVector cen1 = a.centre;
   PVector cen2 = b.centre;
 
-  float cumulativeRadii = (a.radius + b.radius)+0.2; // extra fudge factor
+  float cumulativeRadii = (a.getRadius() + b.getRadius())+0.5; // extra fudge factor
   float distanceBetween = cen1.dist(cen2);
 
   float overlap = cumulativeRadii - distanceBetween;

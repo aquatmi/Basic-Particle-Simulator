@@ -2,18 +2,26 @@ class Particle extends SimSphere {
   String test = "test";
   PVector vel;
   int mass = 1;
-  float radius = 2.5;
   PVector centre;
 
-  Particle() {
+  Particle(float pRad) {
     this.vel = vec(random(-0.5, 0.5), random(-0.5, 0.5), random(-0.5, 0.5));
-    this.setRadius(radius);
+    this.setRadius(pRad);
     centre = vec(random(-40, 40), random(-40, 40), random(-40, 40));
     this.setCentre(centre);
   }
 
   void moveMe() {
-    centre = vec(this.getCentre().x + this.vel.x, this.getCentre().y + this.vel.y, this.getCentre().z + this.vel.z);
+    centre = this.getCentre().add(vel);
+    this.setCentre(centre);
+  }
+
+  void moveMe(float mult) {
+    PVector tempVel = new PVector();
+    tempVel.add(vel);
+    tempVel.mult(mult);
+    //print("=== \n vel: " + vel + "\n tempVel: " + tempVel + "\n");
+    centre = this.getCentre().add(tempVel);
     this.setCentre(centre);
   }
 
