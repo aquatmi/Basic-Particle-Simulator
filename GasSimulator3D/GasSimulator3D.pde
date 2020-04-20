@@ -17,12 +17,14 @@ int currSec;
 int prevSec;
 int fps = -1;
 
+
 // particles
 float pRad = 1.5;
 int pMax = 1000;
 int pCount = 500;
 float pMult = 1.5;
-
+color pColour = color(0, 0, 0);
+int bSize = 50;
 
 
 void setup() { 
@@ -33,11 +35,11 @@ void setup() {
   textFont(font);
   // create camera and UI
   myCamera = new SimCamera();
-  myCamera.setPositionAndLookat(vec(100, -20, 200), vec(0, 0, 0));
+  myCamera.setPositionAndLookat(vec(60, -20, 200), vec(0, 0, 0));
   setupUI();
   // starter objects
   cage = new SimBox();
-  cage.setTransformAbs(vec(0, 0, 0), 50, 0, 0, 0);
+  cage.setTransformAbs(vec(0, 0, 0), bSize, 0, 0, 0);
   particles = new ArrayList<Particle>();
   for (int i = 0; i < pMax; i++) {
     particles.add(new Particle(pRad));
@@ -48,7 +50,7 @@ void draw() {
   background(255);
   lights();
   directionalLight(128, 128, 128, 0, -1, 1);
-  ambientLight(40, 30, 190);
+  ambientLight(red(pColour), blue(pColour), green(pColour));
   myCamera.update();
 
   // calculate fps
@@ -85,7 +87,7 @@ void draw() {
   myCamera.startDrawHUD();
   noLights();
   lights();
-  ambientLight(20,20,20);
+  ambientLight(20, 20, 20);
   textAlign(LEFT, TOP);
   // fps
   if (showFPS) {
@@ -169,14 +171,26 @@ void handleUIEvent(UIEventData uied) {
   if (uied.uiComponentType == "Slider") {
     switch(uied.uiLabel) {
     case "Temperature":
-      pMult = uied.sliderValue*2 + 0.5;
+      pMult = uied.sliderValue*5 + 0.1;
+      int temp = (int)(uied.sliderValue*255);
+      if (temp > 255/2) {
+        pColour = color(-255+(temp*2), 0, 0);
+      } else {
+        pColour = color(0, 255-(temp*2), 0);
+      }
       break;
     case "Size":
       pRad = uied.sliderValue*2 + 0.5;
-      for (Particle p : particles){ p.setRadius(pRad); }
+      for (Particle p : particles) { 
+        p.setRadius(pRad);
+      }
       break;
     case "Pressure":
-      pCount = int(uied.sliderValue*1000);
+      pCount = int(uied.sliderValue*999)+1;
+      break;
+    case "Box Size":
+      bSize = int(uied.sliderValue*100)+50;
+      cage.setTransformAbs(vec(0, 0, 0), bSize, 0, 0, 0);
       break;
     }
   }
@@ -191,6 +205,7 @@ void setupUI() {
   userUI.addSlider("Temperature", 5, 100, 0.5);
   userUI.addSlider("Pressure", 5, 135, 0.5);
   userUI.addSlider("Size", 5, 170, 0.5);
+  userUI.addSlider("Box Size", 5, 205, 0);
   // QUIT UI
   quitUI = new SimpleUI();
   quitUI.addPlainButton("Yes", (width/2)-80, height/2);

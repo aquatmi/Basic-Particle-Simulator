@@ -3,6 +3,7 @@ class Particle extends SimSphere {
   PVector vel;
   int mass = 1;
   PVector centre;
+  PVector gravity = vec(0, 0.2, 0);
 
   Particle(float pRad) {
     this.vel = vec(random(-0.5, 0.5), random(-0.5, 0.5), random(-0.5, 0.5));
@@ -22,6 +23,7 @@ class Particle extends SimSphere {
     tempVel.mult(mult);
     //print("=== \n vel: " + vel + "\n tempVel: " + tempVel + "\n");
     centre = this.getCentre().add(tempVel);
+    centre = centre.add(gravity);    
     this.setCentre(centre);
   }
 

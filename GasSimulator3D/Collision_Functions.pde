@@ -2,22 +2,22 @@ void moveParticles(ArrayList<Particle> pl, int pCount) {
   for (int i = 0; i < pCount; i++) {
     Particle p = pl.get(i);
     p.moveMe(pMult);
-    if (p.getCentre().x >= 48) { 
+    if (p.getCentre().x >= bSize-pRad) { 
       p.bounce("x");
     }
-    if (p.getCentre().x <= -48) {
+    if (p.getCentre().x <= -bSize+pRad) {
       p.bounce("-x");
     }
-    if (p.getCentre().y >= 48) {
+    if (p.getCentre().y >= bSize-pRad) {
       p.bounce("y");
     }
-    if (p.getCentre().y <= -48) {
+    if (p.getCentre().y <= -bSize+pRad) {
       p.bounce("-y");
     }
-    if (p.getCentre().z >= 48) {
+    if (p.getCentre().z >= bSize-pRad) {
       p.bounce("z");
     }
-    if (p.getCentre().z <= -48) {
+    if (p.getCentre().z <= -bSize+pRad) {
       p.bounce("-z");
     }
   }
