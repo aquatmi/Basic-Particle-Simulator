@@ -3,7 +3,7 @@ class Particle extends SimSphere {
   PVector vel;
   int mass = 1;
   PVector centre;
-  PVector gravity = vec(0, 0.2, 0);
+  PVector gravity = vec(0, 0.1, 0);
 
   Particle(float pRad) {
     this.vel = vec(random(-0.5, 0.5), random(-0.5, 0.5), random(-0.5, 0.5));
